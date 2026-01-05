@@ -1,0 +1,41 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+###
+GET http://localhost:8080/api/projects/1
+
+###
+POST http://localhost:8080/api/projects
+Content-Type: application/json
+
+{
+  "name": "Project Beta",
+  "projectKey": "TFPRO-003",
+  "type": "Software Development",
+  "ownerId": 2
+}
+
+
+
+###
+GET http://localhost:8080/api/projects/5/statuses
+
+###
+GET http://localhost:8080/api/projects/6/members
+
+
+
+
+
+###
+PUT http://localhost:8080/api/projects/1
+Content-Type: application/json
+
+{
+  "name": "TaskFlow Pro",
+  "projectKey": "TFPRO-001",
+  "type": "Software Development",
+  "ownerId": 2
+}
+
