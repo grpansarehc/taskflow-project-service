@@ -6,9 +6,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface ProjectMemberRepository extends JpaRepository<ProjectMember, Long> {
-    List<ProjectMember> findByProjectId(Long projectId);
-    Optional<ProjectMember> findByProjectIdAndUserId(Long projectId, Long userId);
+public interface ProjectMemberRepository extends JpaRepository<ProjectMember, UUID> {
+    List<ProjectMember> findByProjectId(UUID projectId);
+    Optional<ProjectMember> findByProjectIdAndUserId(UUID projectId, UUID userId);
 }

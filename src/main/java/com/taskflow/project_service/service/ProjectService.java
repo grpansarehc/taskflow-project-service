@@ -2,6 +2,7 @@ package com.taskflow.project_service.service;
 
 import com.taskflow.project_service.dto.ProjectRequestDTO;
 import com.taskflow.project_service.dto.ProjectResponseDTO;
+import com.taskflow.project_service.dto.WorkFlowStatusResponseDTO;
 import com.taskflow.project_service.entities.Project;
 import com.taskflow.project_service.entities.WorkFlowStatus;
 import com.taskflow.project_service.enums.DefaultWorkflowStatus;
@@ -12,11 +13,15 @@ import com.taskflow.project_service.repository.ProjectRepository;
 import com.taskflow.project_service.repository.WorkFlowStatusRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
+        
+
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,7 +38,7 @@ public class ProjectService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<ProjectResponseDTO> getProjectById(Long id) {
+    public Optional<ProjectResponseDTO> getProjectById(UUID id) {
         return projectRepository.findById(id)
                 .map(this::mapToResponseDTO);
     }
@@ -43,7 +48,7 @@ public class ProjectService {
         // 1️⃣ Map DTO to Entity and Save project
         Project project = Project.builder()
                 .name(requestDTO.getName())
-                .projectKey(requestDTO.getProjectKey())
+                .projectKey(requestDTO.getProjectKey().toUpperCase())
                 .type(requestDTO.getType())
                 .ownerId(requestDTO.getOwnerId())
                 .build();
@@ -76,12 +81,12 @@ public class ProjectService {
         return mapToResponseDTO(savedProject);
     }
 
-    public ProjectResponseDTO updateProject(Long id, ProjectRequestDTO projectDetailsDTO) {
+    public ProjectResponseDTO updateProject(UUID id, ProjectRequestDTO projectDetailsDTO) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Project not found with id: " + id));
         
         project.setName(projectDetailsDTO.getName());
-        project.setProjectKey(projectDetailsDTO.getProjectKey());
+        project.setProjectKey(projectDetailsDTO.getProjectKey().toUpperCase());
         project.setType(projectDetailsDTO.getType());
         project.setOwnerId(projectDetailsDTO.getOwnerId());
         
@@ -89,14 +94,16 @@ public class ProjectService {
         return mapToResponseDTO(updatedProject);
     }
 
-    public void deleteProject(Long id) {
+    public void deleteProject(UUID id) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Project not found with id: " + id));
         projectRepository.delete(project);
     }
 
-    public List<WorkFlowStatus> getProjectStatuses(Long projectId) {
-        return workFlowStatusRepository.findByProjectId(projectId);
+    public List<WorkFlowStatusResponseDTO> getProjectStatuses(UUID projectId) {
+        return workFlowStatusRepository.findByProjectId(projectId).stream()
+                .map(this::mapToStatusResponseDTO)
+                .collect(Collectors.toList());
     }
 
     private ProjectResponseDTO mapToResponseDTO(Project project) {
@@ -107,6 +114,19 @@ public class ProjectService {
                 .type(project.getType())
                 .ownerId(project.getOwnerId())
                 .createdAt(project.getCreatedAt())
+                .build();
+    }
+
+    private WorkFlowStatusResponseDTO mapToStatusResponseDTO(WorkFlowStatus status) {
+        return WorkFlowStatusResponseDTO.builder()
+                .id(status.getId())
+                .statusName(status.getStatusName())
+                .code(status.getCode())
+                .description(status.getDescription())
+                .orderIndex(status.getOrderIndex())
+                .isFinal(status.getIsFinal())
+                .isActive(status.getIsActive())
+                .createdAt(status.getCreatedAt())
                 .build();
     }
 }

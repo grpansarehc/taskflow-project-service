@@ -6,17 +6,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProjectResponseDTO {
-    private UUID id;
-    private String name;
-    private String projectKey;
-    private String type;
-    private UUID ownerId;
-    private LocalDateTime createdAt;
+public class ErrorResponse {
+    private int status;
+    private String message;
+    private String path;
+    private LocalDateTime timestamp;
+    private Map<String, String> errors; // For validation errors
 }

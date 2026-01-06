@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import  com.taskflow.project_service.entities.Project;
 
@@ -24,11 +25,11 @@ import  com.taskflow.project_service.entities.Project;
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ProjectMember {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Column(name="user_id", nullable = false)
-    private Long userId;
+    private UUID userId;
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="project_id",nullable = false)

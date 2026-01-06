@@ -12,11 +12,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProjectResponseDTO {
+public class WorkFlowStatusResponseDTO {
     private UUID id;
-    private String name;
-    private String projectKey;
-    private String type;
-    private UUID ownerId;
+    private String statusName;
+    private String code;
+    private String description;
+    private Integer orderIndex;
+    private Boolean isFinal;
+    private Boolean isActive;
     private LocalDateTime createdAt;
 }

@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "workflow_status", uniqueConstraints = {
@@ -23,9 +24,9 @@ import java.time.LocalDateTime;
 public class WorkFlowStatus {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "status_id")
-    private Long id;
+    private UUID id;
 
     @Column(nullable = false, name = "status_name")
     private String statusName;

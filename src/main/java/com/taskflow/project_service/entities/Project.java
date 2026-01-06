@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "projects")
@@ -20,9 +21,9 @@ import java.time.LocalDateTime;
 public class Project {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "project_id")
-    private Long id;
+    private UUID id;
 
     @Column(nullable = false)
     private String name;
@@ -33,7 +34,7 @@ public class Project {
     private String type;
 
     @Column(name = "owner_id", nullable = false)
-    private Long ownerId;
+    private UUID ownerId;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
