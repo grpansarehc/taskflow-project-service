@@ -1,7 +1,7 @@
 package com.taskflow.project_service.service;
 
 
-import com.taskflow.project_service.config.UmsClient;
+import com.taskflow.project_service.clients.UserClient;
 import com.taskflow.project_service.dto.AddMemberByEmailRequest;
 import com.taskflow.project_service.dto.ProjectMemberRequestDTO;
 import com.taskflow.project_service.dto.ProjectMemberResponseDTO;
@@ -26,7 +26,7 @@ public class ProjectMemberService {
 
     private final ProjectMemberRepository projectMemberRepository;
     private final ProjectRepository projectRepository;
-    private final UmsClient umsClient;
+    private final UserClient umsClient;
 
 
     public List<ProjectMemberResponseDTO> getMembersByProject(UUID projectId) {
@@ -59,7 +59,7 @@ public class ProjectMemberService {
         // 1. Check if requesting user has permission (must be OWNER or ADMIN)
         ProjectMember requestingMember = projectMemberRepository.findByProjectIdAndUserId(projectId, requestingUserId)
                 .orElseThrow(() -> new RuntimeException("You are not a member of this project"));
-        
+
         if (requestingMember.getRole() != ProjectRole.OWNER && requestingMember.getRole() != ProjectRole.ADMIN) {
             throw new RuntimeException("Only project owners and admins can add members");
         }
@@ -72,7 +72,7 @@ public class ProjectMemberService {
             throw new RuntimeException("User not found with email: " + email);
         }
 
-        // 3. Check if user is already a member
+//         3. Check if user is already a member
         if (projectMemberRepository.findByProjectIdAndUserId(projectId, userResponse.getId()).isPresent()) {
             throw new RuntimeException("User with email " + email + " is already a member of this project");
         }
