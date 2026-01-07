@@ -1,8 +1,11 @@
 package com.taskflow.project_service.service;
 
 
+import com.taskflow.project_service.config.UmsClient;
+import com.taskflow.project_service.dto.AddMemberByEmailRequest;
 import com.taskflow.project_service.dto.ProjectMemberRequestDTO;
 import com.taskflow.project_service.dto.ProjectMemberResponseDTO;
+import com.taskflow.project_service.dto.UserResponse;
 import com.taskflow.project_service.entities.Project;
 import com.taskflow.project_service.entities.ProjectMember;
 import com.taskflow.project_service.enums.ProjectRole;
@@ -11,6 +14,7 @@ import com.taskflow.project_service.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
+
 
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +26,8 @@ public class ProjectMemberService {
 
     private final ProjectMemberRepository projectMemberRepository;
     private final ProjectRepository projectRepository;
+    private final UmsClient umsClient;
+
 
     public List<ProjectMemberResponseDTO> getMembersByProject(UUID projectId) {
         return projectMemberRepository.findByProjectId(projectId).stream()
@@ -47,6 +53,45 @@ public class ProjectMemberService {
         ProjectMember savedMember = projectMemberRepository.save(member);
         return mapToResponseDTO(savedMember);
     }
+
+    @Transactional
+    public ProjectMemberResponseDTO addMemberByEmail(UUID projectId, String email, ProjectRole role, UUID requestingUserId, String authToken) {
+        // 1. Check if requesting user has permission (must be OWNER or ADMIN)
+        ProjectMember requestingMember = projectMemberRepository.findByProjectIdAndUserId(projectId, requestingUserId)
+                .orElseThrow(() -> new RuntimeException("You are not a member of this project"));
+        
+        if (requestingMember.getRole() != ProjectRole.OWNER && requestingMember.getRole() != ProjectRole.ADMIN) {
+            throw new RuntimeException("Only project owners and admins can add members");
+        }
+
+        // 2. Fetch user from UMS service using Feign client
+        UserResponse userResponse;
+        try {
+            userResponse = umsClient.getUserByEmail(email, authToken);
+        } catch (Exception e) {
+            throw new RuntimeException("User not found with email: " + email);
+        }
+
+        // 3. Check if user is already a member
+        if (projectMemberRepository.findByProjectIdAndUserId(projectId, userResponse.getId()).isPresent()) {
+            throw new RuntimeException("User with email " + email + " is already a member of this project");
+        }
+
+        // 4. Get project
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new RuntimeException("Project not found with id: " + projectId));
+
+        // 5. Create and save new member
+        ProjectMember member = ProjectMember.builder()
+                .project(project)
+                .userId(userResponse.getId())
+                .role(role)
+                .build();
+
+        ProjectMember savedMember = projectMemberRepository.save(member);
+        return mapToResponseDTO(savedMember);
+    }
+
 
     @Transactional
     public ProjectMemberResponseDTO updateMemberRole(UUID projectId, UUID userId, ProjectRole newRole) {
