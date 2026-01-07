@@ -1,5 +1,6 @@
 package com.taskflow.project_service.controllers;
 
+import com.taskflow.project_service.dto.AddMemberByEmailRequest;
 import com.taskflow.project_service.dto.ProjectMemberRequestDTO;
 import com.taskflow.project_service.dto.ProjectMemberResponseDTO;
 import com.taskflow.project_service.entities.ProjectMember;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/api/projects/{projectId}/members")
@@ -36,6 +38,25 @@ public class ProjectMemberController {
             @Valid @RequestBody ProjectMemberRequestDTO requestDTO) {
         return ResponseEntity.ok(projectMemberService.addMemberToProject(projectId, requestDTO));
     }
+
+    @PostMapping("/by-email")
+    @Operation(summary = "Add a new member to a project by email")
+    public ResponseEntity<ProjectMemberResponseDTO> addMemberByEmail(
+            @PathVariable UUID projectId,
+            @Valid @RequestBody AddMemberByEmailRequest requestDTO,
+            @RequestHeader("Authorization") String authToken,
+            @RequestHeader("X-User-Id") UUID requestingUserId) {
+        return ResponseEntity.ok(
+            projectMemberService.addMemberByEmail(
+                projectId, 
+                requestDTO.getEmail(), 
+                requestDTO.getRole(), 
+                requestingUserId, 
+                authToken
+            )
+        );
+    }
+
 
     @PutMapping("/{userId}/role")
     @Operation(summary = "Update member role")
