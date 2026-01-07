@@ -16,6 +16,7 @@ public class ProjectResponseDTO {
     private UUID id;
     private String name;
     private String projectKey;
+    private String description;
     private String type;
     private UUID ownerId;
     private LocalDateTime createdAt;

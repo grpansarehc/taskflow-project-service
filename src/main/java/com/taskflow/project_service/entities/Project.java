@@ -31,6 +31,9 @@ public class Project {
     @Column(name = "project_key", nullable = false, unique = true)
     private String projectKey;
 
+    @Column(length = 500)
+    private String description;
+
     private String type;
 
     @Column(name = "owner_id", nullable = false)

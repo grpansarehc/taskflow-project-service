@@ -23,6 +23,9 @@ public class ProjectRequestDTO {
     @Size(min = 2, max = 10, message = "Project key must be between 2 and 10 characters")
     private String projectKey;
 
+    @Size(max = 500, message = "Description must not exceed 500 characters")
+    private String description;
+
     @NotBlank(message = "Project type is required")
     private String type;
 
