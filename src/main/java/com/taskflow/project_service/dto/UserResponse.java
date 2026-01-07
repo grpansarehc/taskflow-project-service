@@ -17,6 +17,6 @@ public class UserResponse {
     private String email;
     private String department;
     private String designation;
-    private String phone;
+
     private boolean isActive;
 }
