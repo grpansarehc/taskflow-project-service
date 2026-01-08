@@ -55,7 +55,7 @@ public class ProjectMemberService {
     }
 
     @Transactional
-    public ProjectMemberResponseDTO addMemberByEmail(UUID projectId, String email, ProjectRole role, UUID requestingUserId, String authToken) {
+    public ProjectMemberResponseDTO addMemberByEmail(UUID projectId, String email, ProjectRole role, UUID requestingUserId) {
         // 1. Check if requesting user has permission (must be OWNER or ADMIN)
         ProjectMember requestingMember = projectMemberRepository.findByProjectIdAndUserId(projectId, requestingUserId)
                 .orElseThrow(() -> new RuntimeException("You are not a member of this project"));
@@ -67,7 +67,7 @@ public class ProjectMemberService {
         // 2. Fetch user from UMS service using Feign client
         UserResponse userResponse;
         try {
-            userResponse = umsClient.getUserByEmail(email, authToken);
+            userResponse = umsClient.getUserByEmail(email);
         } catch (Exception e) {
             throw new RuntimeException("User not found with email: " + email);
         }

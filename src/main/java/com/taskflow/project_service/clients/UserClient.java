@@ -10,8 +10,5 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface UserClient {
 
     @GetMapping("/api/users/by-email")
-    UserResponse getUserByEmail(
-        @RequestParam("email") String email,
-        @RequestHeader("Authorization") String authToken
-    );
+    UserResponse getUserByEmail(@RequestParam("email") String email);
 }
