@@ -66,10 +66,24 @@ public class ProjectMemberService {
 
         // 2. Fetch user from UMS service using Feign client
         UserResponse userResponse;
+        // NEW CODE (Reveals the error)
         try {
             userResponse = umsClient.getUserByEmail(email);
+        } catch (feign.FeignException e) {
+            // This logs the exact status (e.g., 401, 404, 500) and the response body from UMS
+            System.err.println("Feign Error Status: " + e.status());
+            System.err.println("Feign Error Body: " + e.contentUTF8());
+
+            if (e.status() == 404) {
+                throw new RuntimeException("User not found in UMS with email: " + email);
+            } else if (e.status() == 401) {
+                throw new RuntimeException("UMS rejected the request (Unauthorized). Check Feign Interceptor.");
+            } else {
+                throw new RuntimeException("UMS Service Error: " + e.status());
+            }
         } catch (Exception e) {
-            throw new RuntimeException("User not found with email: " + email);
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected error: " + e.getMessage());
         }
 
 //         3. Check if user is already a member
