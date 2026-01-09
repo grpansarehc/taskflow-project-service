@@ -12,24 +12,27 @@ public class FeignClientInterceptor implements RequestInterceptor {
 
     @Override
     public void apply(RequestTemplate template) {
-        ServletRequestAttributes attributes = 
-            (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
         if (attributes != null) {
             HttpServletRequest request = attributes.getRequest();
-            
+
             // Forward Authorization header
             String authHeader = request.getHeader("Authorization");
             if (authHeader != null && !authHeader.isEmpty()) {
+                System.out.println("FeignClientInterceptor: Forwarding Authorization header: "
+                        + authHeader.substring(0, Math.min(authHeader.length(), 20)) + "...");
                 template.header("Authorization", authHeader);
+            } else {
+                System.out.println("FeignClientInterceptor: Authorization header NOT FOUND in RequestContext");
             }
-            
+
             // Forward X-User-Id header (optional, for additional context)
             String userIdHeader = request.getHeader("X-User-Id");
             if (userIdHeader != null && !userIdHeader.isEmpty()) {
                 template.header("X-User-Id", userIdHeader);
             }
-            
+
             // Forward X-User-Email header (optional)
             String userEmailHeader = request.getHeader("X-User-Email");
             if (userEmailHeader != null && !userEmailHeader.isEmpty()) {
