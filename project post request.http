@@ -15,6 +15,12 @@ Content-Type: application/json
   "type": "Software Development",
   "ownerId": "550e8400-e29b-41d4-a716-446655440002"
 }
+###
+
+GET http://localhost:8082/api/projects/db3386b9-a7c6-42a8-ac78-c8c6ac3923f6/statuses
+
+
+
 
 
 
