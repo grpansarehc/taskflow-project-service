@@ -1,0 +1,47 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=IntelliJ IDEA
+
+###
+GET http://localhost:8080/api/projects/550e8400-e29b-41d4-a716-446655440000
+
+###
+POST http://localhost:8080/api/projects
+Content-Type: application/json
+
+{
+  "name": "Project Beta",
+  "projectKey": "TFPRO-003",
+  "type": "Software Development",
+  "ownerId": "550e8400-e29b-41d4-a716-446655440002"
+}
+###
+
+GET http://localhost:8082/api/projects/db3386b9-a7c6-42a8-ac78-c8c6ac3923f6/statuses
+
+
+
+
+
+
+###
+GET http://localhost:8080/api/projects/550e8400-e29b-41d4-a716-446655440005/statuses
+
+###
+GET http://localhost:8080/api/projects/550e8400-e29b-41d4-a716-446655440006/members
+
+
+
+
+
+###
+PUT http://localhost:8080/api/projects/550e8400-e29b-41d4-a716-446655440001
+Content-Type: application/json
+
+{
+  "name": "TaskFlow Pro",
+  "projectKey": "TFPRO-001",
+  "type": "Software Development",
+  "ownerId": "550e8400-e29b-41d4-a716-446655440002"
+}
+
