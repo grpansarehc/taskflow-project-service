@@ -123,7 +123,7 @@ public class ProjectService {
                 .statusName(status.getStatusName())
                 .code(status.getCode())
                 .description(status.getDescription())
-                .orderIndex(status.getOrderIndex())
+                .position(status.getOrderIndex())
                 .isFinal(status.getIsFinal())
                 .isActive(status.getIsActive())
                 .createdAt(status.getCreatedAt())

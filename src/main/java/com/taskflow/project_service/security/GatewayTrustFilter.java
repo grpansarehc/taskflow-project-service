@@ -22,7 +22,11 @@ public class GatewayTrustFilter extends OncePerRequestFilter {
         String userId = request.getHeader("X-User-Id");
         String emailId = request.getHeader("X-User-Email");
 
+        System.out.println("ProjectService GatewayTrustFilter: Received Request: " + request.getRequestURI());
+        System.out.println("ProjectService GatewayTrustFilter: X-User-Id: " + userId);
+
         if (userId == null || userId.isEmpty()) {
+            System.err.println("ProjectService GatewayTrustFilter: Access Denied! Missing X-User-Id.");
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Request must come through Gateway");
             return;
         }

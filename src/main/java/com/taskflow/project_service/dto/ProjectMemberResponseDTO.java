@@ -21,4 +21,6 @@ public class ProjectMemberResponseDTO {
     private ProjectRole role;
     private MemberStatus status;
     private LocalDateTime joinedAt;
+    private String name;
+    private String email;
 }

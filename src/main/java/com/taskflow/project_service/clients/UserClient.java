@@ -11,4 +11,7 @@ public interface UserClient {
 
     @GetMapping("/api/users/by-email")
     UserResponse getUserByEmail(@RequestParam("email") String email);
+
+    @GetMapping("/api/users/{id}")
+    UserResponse getUserById(@org.springframework.web.bind.annotation.PathVariable("id") java.util.UUID id);
 }

@@ -17,7 +17,7 @@ public class WorkFlowStatusResponseDTO {
     private String statusName;
     private String code;
     private String description;
-    private Integer orderIndex;
+    private Integer position;
     private Boolean isFinal;
     private Boolean isActive;
     private LocalDateTime createdAt;
