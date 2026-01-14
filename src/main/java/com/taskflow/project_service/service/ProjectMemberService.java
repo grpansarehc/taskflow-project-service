@@ -126,7 +126,19 @@ public class ProjectMemberService {
     }
 
     private ProjectMemberResponseDTO mapToResponseDTO(ProjectMember member) {
-
+        String name = null;
+        String email = null;
+        try {
+            UserResponse user = umsClient.getUserById(member.getUserId());
+            if (user != null) {
+                name = user.getName();
+                email = user.getEmail();
+            }
+        } catch (Exception e) {
+            // Log error but verify flow continues
+            System.err.println("Failed to fetch user details for member: " + member.getUserId());
+            e.printStackTrace(); // Added to see the actual error
+        }
 
         return ProjectMemberResponseDTO.builder()
                 .id(member.getId())
@@ -135,6 +147,8 @@ public class ProjectMemberService {
                 .role(member.getRole())
                 .status(member.getStatus())
                 .joinedAt(member.getJoinedAt())
+                .name(name)
+                .email(email)
                 .build();
     }
 }
