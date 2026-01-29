@@ -44,12 +44,15 @@ public class ProjectMemberController {
     public ResponseEntity<ProjectMemberResponseDTO> addMemberByEmail(
             @PathVariable UUID projectId,
             @Valid @RequestBody AddMemberByEmailRequest requestDTO,
-            @RequestHeader("X-User-Id") UUID requestingUserId) {
+            @RequestHeader("X-User-Id") UUID requestingUserId,
+            @RequestHeader("X-User-Email") String requestingUserEmail,
+            @RequestHeader(value = "Authorization", required = false) String token) {
         return ResponseEntity.ok(
             projectMemberService.addMemberByEmail(
                 projectId, 
                 requestDTO.getEmail(), 
                 requestDTO.getRole(), 
+                requestingUserEmail,
                 requestingUserId
             )
         );
