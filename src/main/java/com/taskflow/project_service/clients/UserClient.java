@@ -14,4 +14,7 @@ public interface UserClient {
 
     @GetMapping("/api/users/{id}")
     UserResponse getUserById(@org.springframework.web.bind.annotation.PathVariable("id") java.util.UUID id);
+
+    @GetMapping("/api/users/by-keycloak-id/{keycloakId}")
+    UserResponse getUserByKeycloakId(@org.springframework.web.bind.annotation.PathVariable("keycloakId") String keycloakId);
 }

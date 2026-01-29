@@ -55,10 +55,28 @@ public class ProjectMemberService {
     }
 
     @Transactional
-    public ProjectMemberResponseDTO addMemberByEmail(UUID projectId, String email, ProjectRole role, UUID requestingUserId) {
+    public ProjectMemberResponseDTO addMemberByEmail(UUID projectId, String email, ProjectRole role, String requestingUserEmail, UUID requestingKeycloakId) {
+        // 0. Resolve Requesting User's Local ID
+        UUID resolvedRequestingUserId;
+        try {
+            if (requestingUserEmail == null || "unknown".equalsIgnoreCase(requestingUserEmail)) {
+                // Fallback: Resolve by Keycloak ID
+                System.out.println("DEBUG: Resolving user by Keycloak ID: " + requestingKeycloakId);
+                UserResponse requestingUser = umsClient.getUserByKeycloakId(requestingKeycloakId.toString());
+                resolvedRequestingUserId = requestingUser.getId();
+            } else {
+                // Resolve by Email
+                System.out.println("DEBUG: Resolving user by Email: " + requestingUserEmail);
+                UserResponse requestingUser = umsClient.getUserByEmail(requestingUserEmail);
+                resolvedRequestingUserId = requestingUser.getId();
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Could not verify requesting user identity: " + e.getMessage());
+        }
+
         // 1. Check if requesting user has permission (must be OWNER or ADMIN)
-        ProjectMember requestingMember = projectMemberRepository.findByProjectIdAndUserId(projectId, requestingUserId)
-                .orElseThrow(() -> new RuntimeException("You are not a member of this project"));
+        ProjectMember requestingMember = projectMemberRepository.findByProjectIdAndUserId(projectId, resolvedRequestingUserId)
+                .orElseThrow(() -> new RuntimeException("You are not a member of this project. ProjectId: " + projectId + ", RequestingUserId (Resolved): " + resolvedRequestingUserId));
 
         if (requestingMember.getRole() != ProjectRole.OWNER && requestingMember.getRole() != ProjectRole.ADMIN) {
             throw new RuntimeException("Only project owners and admins can add members");
